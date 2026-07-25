@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Painel — Legendas</title>
+  <link rel="stylesheet" href="Legendas.css" />
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="header-top">
+      <div class="logo-wrap">
+        <img src="img/logo.png" alt="Green Auto Club" />
+        <div class="logo-text">Green Auto Club</div>
+      </div>
+      <div>
+        <h1>Painel — Legendas</h1>
+        <p class="sub">Busca + filtros por <b>Marca</b> e <b>Tipo</b>. Clique em “Copiar legenda”.</p>
+      </div>
+    </div>
+
+    <div class="controls">
+      <input id="q" placeholder="Buscar por modelo, motor, país... (ex: GT3, V10, Brazil )" />
+      <select id="brand"></select>
+      <select id="type"></select>
+      <button id="add">+ Adicionar</button>
+      <button id="reset">Limpar</button>
+    </div>
+
+    <div class="stats">
+      <span class="chip"><span id="count"></span> resultados</span>
+      <span class="chip">Dica: filtre por <b>Marca</b> e <b>Tipo</b> e use a busca para refinar</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="grid" class="grid"></div>
+</main>
+
+<!-- Modal: adicionar nova legenda -->
+<div id="modal" class="modal">
+  <div class="modal-inner">
+    <div class="modal-header">
+      <div style="font-weight:800">Adicionar legenda</div>
+      <button id="closeModal" class="ghost modal-button">Fechar</button>
+    </div>
+
+    <div class="modal-grid">
+      <input id="fTitle" placeholder="Título (ex: Porsche 911 (991.2) GT3 RS)" />
+      <input id="fBrand" placeholder="Marca (ex: Porsche)" />
+      <input id="fType" placeholder="Tipo (ex: GT3 RS)" />
+      <input id="fNotes" placeholder="Observação opcional (ex: 2024 facelift)" />
+    </div>
+
+    <div style="margin-top:10px;">
+      <textarea id="fCaption" rows="10" class="modal-textarea" placeholder="Cole aqui a legenda completa (texto + ficha técnica)"></textarea>
+    </div>
+
+    <div class="modal-actions">
+      <button id="save">Salvar</button>
+    </div>
+
+    <div class="modal-note">
+      As legendas adicionadas aqui ficam salvas no seu navegador (localStorage). Para levar para outro dispositivo, exporte/importa o JSON (opcional).
+      <div class="modal-note-flex">
+        <button id="exportJson" class="ghost modal-button">Exportar JSON</button>
+        <button id="importJson" class="ghost modal-button">Importar JSON</button>
+      </div>
+      <textarea id="jsonBox" rows="6" class="modal-jsonBox" placeholder="Cole aqui um JSON exportado para importar"></textarea>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script src="Legendas.js"></script>
+</body>
+</html>
