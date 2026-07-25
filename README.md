@@ -75,3 +75,5 @@ Você pode expandir a lista pelo botão **+ Adicionar** ou editando o array `BAS
 ## Licença
 
 Uso interno / comunitário do Green Auto Club. Ajuste conforme a necessidade do projeto.
+
+[![Netlify Status](https://api.netlify.com/api/v1/badges/9fcddeb3-8eae-4cca-82a3-c0d352545b86/deploy-status)](https://app.netlify.com/projects/greenautoclub/deploys)
