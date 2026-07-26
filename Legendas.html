@@ -67,7 +67,7 @@
     </div>
 
     <div class="modal-note">
-      As legendas adicionadas aqui ficam salvas no seu navegador (localStorage). Para levar para outro dispositivo, exporte/importa o JSON (opcional).
+      As legendas adicionadas aqui ficam salvas na nuvem (Supabase) e aparecem para qualquer pessoa que acessar o site, em qualquer dispositivo. Exporte/importe o JSON como backup, se precisar.
       <div class="modal-note-flex">
         <button id="exportJson" class="ghost modal-button">Exportar JSON</button>
         <button id="importJson" class="ghost modal-button">Importar JSON</button>
@@ -79,6 +79,7 @@
 
 <div id="toast" class="toast"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="Legendas.js"></script>
 </body>
 </html>

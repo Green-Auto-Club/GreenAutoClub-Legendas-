@@ -1,19 +1,47 @@
 // Dados extraídos da sua página "Legendas" (PT-BR).
-const STORAGE_KEY = "gac_legendas_items_v1";
 
-function loadCustomItems(){
+// ====== CONFIG SUPABASE ======
+// Troque pelos dados do SEU projeto Supabase (Project Settings > API).
+const SUPABASE_URL = "https://fxcqyfcsmzuanculnkgl.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_1C328zUC3M0IEH9-Xu6lYg_U6tt7qy2";
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const TABLE = "legendas";
+// ==============================
+
+// Busca todas as legendas adicionadas, salvas na nuvem (tabela "legendas")
+async function loadCustomItems(){
   try{
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if(!raw) return [];
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
+    const { data, error } = await supabase
+      .from(TABLE)
+      .select("title,brand,type,caption")
+      .order("created_at", { ascending: true });
+    if(error) throw error;
+    return Array.isArray(data) ? data : [];
   }catch(e){
+    console.error("Erro ao carregar legendas do Supabase:", e);
+    showToast("Não foi possível carregar as legendas salvas na nuvem.");
     return [];
   }
 }
 
-function saveCustomItems(items){
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+// Insere uma legenda nova na nuvem
+async function insertCustomItem(item){
+  const { error } = await supabase.from(TABLE).insert([{
+    title: item.title,
+    brand: item.brand,
+    type: item.type,
+    caption: item.caption
+  }]);
+  if(error) throw error;
+}
+
+// Insere várias legendas de uma vez (usado na importação de JSON)
+async function bulkInsertCustomItems(items){
+  const rows = items.map(it => ({
+    title: it.title, brand: it.brand, type: it.type, caption: it.caption
+  }));
+  const { error } = await supabase.from(TABLE).insert(rows);
+  if(error) throw error;
 }
 
 const BASE_ITEMS = [
@@ -275,8 +303,8 @@ FICHA TÉCNICA
   },
 ];
 
-// Itens totais = base + itens adicionados no navegador
-const ITEMS = [...BASE_ITEMS, ...loadCustomItems()];
+// Itens totais = base + itens adicionados (carregados da nuvem em init())
+let ITEMS = [...BASE_ITEMS];
 
 const $ = (id) => document.getElementById(id);
 
@@ -433,7 +461,11 @@ function setupHeaderScroll(){
   }, { passive: true });
 }
 
-function init(){
+async function init(){
+  showToast("Carregando legendas da nuvem...");
+  const custom = await loadCustomItems();
+  ITEMS = [...BASE_ITEMS, ...custom];
+
   refreshFilters();
 
   $("q").addEventListener("input", apply);
@@ -444,7 +476,7 @@ function init(){
   $("closeModal").addEventListener("click", closeModal);
   $("modal").addEventListener("click", (e)=>{ if(e.target === $("modal")) closeModal(); });
 
-  $("save").addEventListener("click", ()=>{
+  $("save").addEventListener("click", async ()=>{
     const title = $("fTitle").value.trim();
     const brand = $("fBrand").value.trim();
     const type = $("fType").value.trim();
@@ -458,28 +490,37 @@ function init(){
 
     const item = { title, brand, type, caption: caption + (notes ? `\n\n${notes}` : "") };
 
-    // salva só os itens custom (não altera os base)
-    const custom = loadCustomItems();
-    custom.push(item);
-    saveCustomItems(custom);
-
-    ITEMS.push(item);
-    refreshFilters();
-    apply();
-    closeModal();
-    showToast("Legenda adicionada ✓");
+    const saveBtn = $("save");
+    saveBtn.disabled = true;
+    try{
+      await insertCustomItem(item);
+      ITEMS.push(item);
+      refreshFilters();
+      apply();
+      closeModal();
+      showToast("Legenda adicionada e salva na nuvem ✓");
+    }catch(e){
+      console.error(e);
+      showToast("Erro ao salvar na nuvem. Verifique a conexão e tente de novo.");
+    }finally{
+      saveBtn.disabled = false;
+    }
   });
 
-  $("exportJson").addEventListener("click", ()=>{
-    const custom = loadCustomItems();
-    $("jsonBox").style.display = "block";
-    $("jsonBox").value = JSON.stringify(custom, null, 2);
-    $("jsonBox").focus();
-    $("jsonBox").select();
-    showToast("JSON pronto para copiar");
+  $("exportJson").addEventListener("click", async ()=>{
+    try{
+      const custom = await loadCustomItems();
+      $("jsonBox").style.display = "block";
+      $("jsonBox").value = JSON.stringify(custom, null, 2);
+      $("jsonBox").focus();
+      $("jsonBox").select();
+      showToast("JSON pronto para copiar");
+    }catch(e){
+      showToast("Erro ao exportar.");
+    }
   });
 
-  $("importJson").addEventListener("click", ()=>{
+  $("importJson").addEventListener("click", async ()=>{
     $("jsonBox").style.display = "block";
     const raw = $("jsonBox").value.trim();
     if(!raw){
@@ -489,18 +530,19 @@ function init(){
     try{
       const parsed = JSON.parse(raw);
       if(!Array.isArray(parsed)) throw new Error("Formato inválido");
-      saveCustomItems(parsed);
 
-      // recarrega: limpa ITEMS e re-adiciona base + custom
-      ITEMS.length = 0;
-      BASE_ITEMS.forEach(x=>ITEMS.push(x));
-      loadCustomItems().forEach(x=>ITEMS.push(x));
+      // adiciona os itens do JSON à nuvem (não apaga o que já existe)
+      await bulkInsertCustomItems(parsed);
+
+      const custom = await loadCustomItems();
+      ITEMS = [...BASE_ITEMS, ...custom];
 
       refreshFilters();
       apply();
-      showToast("Importado ✓");
+      showToast("Importado para a nuvem ✓");
     }catch(e){
-      showToast("JSON inválido.");
+      console.error(e);
+      showToast("JSON inválido ou erro ao importar.");
     }
   });
 
