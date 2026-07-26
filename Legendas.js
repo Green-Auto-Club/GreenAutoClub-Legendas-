@@ -2,8 +2,8 @@
 
 // ====== CONFIG SUPABASE ======
 // Troque pelos dados do SEU projeto Supabase (Project Settings > API).
-const SUPABASE_URL = "https://fxcqyfcsmzuanculnkgl.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_1C328zUC3M0IEH9-Xu6lYg_U6tt7qy2";
+const SUPABASE_URL = "https://SEU-PROJETO.supabase.co";
+const SUPABASE_ANON_KEY = "SUA-CHAVE-ANON-AQUI";
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const TABLE = "legendas";
 // ==============================
