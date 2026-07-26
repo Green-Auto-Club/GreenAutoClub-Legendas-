@@ -2,16 +2,16 @@
 
 // ====== CONFIG SUPABASE ======
 // Troque pelos dados do SEU projeto Supabase (Project Settings > API).
-const SUPABASE_URL = "https://SEU-PROJETO.supabase.co";
-const SUPABASE_ANON_KEY = "SUA-CHAVE-ANON-AQUI";
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const SUPABASE_URL = "https://fxcqyfcsmzuanculnkgl.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_1C328zUC3M0IEH9-Xu6lYg_U6tt7qy2";
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const TABLE = "legendas";
 // ==============================
 
 // Busca todas as legendas adicionadas, salvas na nuvem (tabela "legendas")
 async function loadCustomItems(){
   try{
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from(TABLE)
       .select("title,brand,type,caption")
       .order("created_at", { ascending: true });
@@ -26,7 +26,7 @@ async function loadCustomItems(){
 
 // Insere uma legenda nova na nuvem
 async function insertCustomItem(item){
-  const { error } = await supabase.from(TABLE).insert([{
+  const { error } = await supabaseClient.from(TABLE).insert([{
     title: item.title,
     brand: item.brand,
     type: item.type,
@@ -40,7 +40,7 @@ async function bulkInsertCustomItems(items){
   const rows = items.map(it => ({
     title: it.title, brand: it.brand, type: it.type, caption: it.caption
   }));
-  const { error } = await supabase.from(TABLE).insert(rows);
+  const { error } = await supabaseClient.from(TABLE).insert(rows);
   if(error) throw error;
 }
 
