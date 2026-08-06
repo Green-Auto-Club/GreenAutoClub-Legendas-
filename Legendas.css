@@ -236,7 +236,7 @@ pre{
 .modal-inner{
   max-width:820px;
   margin:6vh auto;
-  background:rgba(18,26,40,.98);
+  background:linear-gradient(180deg,#030503,var(--bg));
   border:1px solid rgba(255,255,255,.12);
   border-radius:16px;
   padding:14px;
@@ -262,7 +262,7 @@ pre{
   padding:11px 12px;
   border-radius:12px;
   border:1px solid rgba(255,255,255,.10);
-  background:#121a28;
+  background:linear-gradient(180deg,#030503,var(--bg));
   color:#e8eefc;
   outline:none;
   resize:vertical;
@@ -292,7 +292,7 @@ pre{
   padding:11px 12px;
   border-radius:12px;
   border:1px solid rgba(255,255,255,.10);
-  background:#0f1624;
+  background:linear-gradient(180deg,#030503,var(--bg));
   color:#e8eefc;
   outline:none;
   resize:vertical;

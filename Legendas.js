@@ -226,7 +226,7 @@ FICHA TÉCNICA
 🌐 Produção: Alemanha`
   },
   {
-    title: "Nissan Skyline ER34 (GT-T)",
+    title: "Nissan Skyline GT-T (ER34)",
     brand: "Nissan",
     type: "Skyline",
     caption:
